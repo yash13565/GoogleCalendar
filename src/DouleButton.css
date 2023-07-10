@@ -1,0 +1,82 @@
+.container {
+  height: vh;
+}
+
+.header {
+  background-color: #4285f4;
+  padding: 1em;
+  display: flex;
+  justify-content: flex-end;
+  height: 4vh;
+  
+}
+
+.header button {
+  background-color: white;
+  color: #4285f4;
+  border: none;
+  padding: 0.5em 1em;
+  margin-left: 1em;
+  cursor: pointer;
+}
+
+
+
+.sidebar {
+  width: 20%;
+  background-color: #f5f5f5;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  height: 70vh;
+}
+
+.sidebar button {
+  background-color: #4285f4;
+  color: white;
+  border: none;
+
+  margin-bottom: 0.5em;
+  cursor: pointer;
+}
+
+.calendar {
+  flex: 10;
+  background-color: white;
+  padding: 1em;
+  overflow: auto;
+}
+
+.events,
+.calendars {
+  margin-top: 1em;
+  overflow: auto;
+}
+
+.events h4,
+.calendars h4 {
+  margin: 0;
+  margin-bottom: 0.5em;
+  font-size: 1em;
+}
+
+.events p,
+.calendars p {
+  font-size: 0.8em;
+  margin: 0;
+  margin-bottom: 0.3em;
+}
+
+
+
+.scheduler{
+  width: 70rem;
+ 
+  height:30rem;
+}
+.mycont{
+
+  display: flex;
+  height: 55rem;
+  gap: 4rem;
+}
