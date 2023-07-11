@@ -1,17 +1,18 @@
-import React, {useMemo, useState  } from 'react';
+import React, { useMemo, useState } from 'react';
 import ApiCalendar from 'react-google-calendar-api';
 import Scheduler from 'devextreme-react/scheduler';
 import { FcGoogle } from 'react-icons/fc';
 import './DouleButton.css';
 import 'react-calendar/dist/Calendar.css';
-import { GoogleLoginButton } from 'react-social-login-buttons';
+import axios from 'axios';
+
 
 
 
 const config = {
   "clientId": '282333590393-j1482v39p73877a8gh4kvb8ud3e20g0c.apps.googleusercontent.com',
   "apiKey": 'AIzaSyCKkTFQ6CIaYSA4XfssctXacw_B65-V93g',
-  "scope": "https://www.googleapis.com/auth/calendar.events",
+  "scope": "https://www.googleapis.com/auth/calendar",
   "discoveryDocs": [
     "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"
   ]
@@ -25,9 +26,10 @@ const DoubleButton = () => {
 
   const [events, setEvents] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [listCalendar,setListCalendar] = useState([])
+  const [listCalendar, setListCalendar] = useState([])
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
-  
+  const [selectedCalendar, setSelectedCalendar] = useState('');
+
   const handleItemClick = async (name) => {
     if (name === 'sign-in') {
       console.log('User clicked sign in.');
@@ -48,11 +50,11 @@ const DoubleButton = () => {
       }
     }
   };
-  console.log(events,'events')
+  console.log(events, 'events')
   const handleCreateEvent = () => {
     const calendarId = 'official23021999@gmail.com';
     const endpoint = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`;
-    const accessToken = 'ya29.a0AbVbY6MmkTDg0Dgb-BVQYnFmgwx07ieWN5j5Hej9TaMQRXGXLp_Na8Zgm8oad_QpR2oi6XoQ74Q6LkC0UZx5SXjoF3_UXRD84qXLqbmM8EbBwlXAVr5AvA1Wo8ssgzer1nn9x9IYLOV7vEjEuchA0hq2Ec9UaCgYKAQMSARESFQFWKvPlX9_8GdeKGkTKAY44DwvMVA0163';
+    const accessToken = 'ya29.a0AbVbY6Pv7SAkToKkm8FrJlkJDaUxuw21rLDhFpzAUFMi_S4ncMg9qVQWIvojmccw6yXdlnAYRJ0joZD8f0OF7w0dyV97OgOcw3KFfT9Ftwk4hms-cKEjr-6gkHsTGOtV-SCj9OZKeNeci3oC-aOBkGoDGXaIaCgYKAbYSARESFQFWKvPl_2ytwc52SHAmehPHP2SoIA0163';
     const date = prompt('Enter the date for the event (YYYY-MM-DD):');
     const summary = prompt('Enter the summary for the event:');
     const selectedTime = prompt('Enter the time for the event (HH:mm):');
@@ -100,28 +102,41 @@ const DoubleButton = () => {
 
   };
 
-   async function listCalendars (){
-      const response = await fetch('https://www.googleapis.com/calendar/v3/users/me/calendarList')
-      // const data = await response.json()
-      console.log(response,'hello')
-   }
-  const render = useMemo(() => {
-    return events.map((event) => {
-      const { summary, start, end } = event;
-      return {
-        text: summary,
-        startDate: start?.dateTime || start?.date,
-        endDate: end?.dateTime || end?.date
-      };
-    });
-  }, [events]);
+  // const listCalendars = async () => {
+  //   try {
+  //     const accessToken = 'ya29.a0AbVbY6MmkTDg0Dgb-BVQYnFmgwx07ieWN5j5Hej9TaMQRXGXLp_Na8Zgm8oad_QpR2oi6XoQ74Q6LkC0UZx5SXjoF3_UXRD84qXLqbmM8EbBwlXAVr5AvA1Wo8ssgzer1nn9x9IYLOV7vEjEuchA0hq2Ec9UaCgYKAQMSARESFQFWKvPlX9_8GdeKGkTKAY44DwvMVA0163';
+  //     const response = await axios.get('https://www.googleapis.com/calendar/v3/users/me/calendarList?key=AIzaSyCKkTFQ6CIaYSA4XfssctXacw_B65-V93g', {
+  //       headers: {
+  //         Authorization: `Bearer ${accessToken}`,
+  //         Accept:'application/json'
+  //       },
+  //     });
+  //     console.log(response.data);
+  //   } catch (error) {
+  //     console.log('Error fetching calendar list:', error);
+  //   }
+  // };
+  
 
- 
+  const render = useMemo(() => {
+    return events
+      .filter((event) => event.organizer.email === selectedCalendar) // Filter events based on the selected calendar
+      .map((event) => {
+        const { summary, start, end } = event;
+        return {
+          text: summary,
+          startDate: start?.dateTime || start?.date,
+          endDate: end?.dateTime || end?.date
+        };
+      });
+  }, [events, selectedCalendar]);
+
+
 
   const handleDeleteEvent = (eventId) => {
     const calendarId = 'official23021999@gmail.com';
     const endpoint = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events/${eventId}`;
-    const accessToken = 'ya29.a0AbVbY6NLWGSSFdYbbk4Ac7f4ngTOe957Mq7ePlop747Y3eWBvMsHiMwxuNkdQmaJqiEaldsvlIJY8at-_FxIFJ4H3VwBMUVivlwbeBfkM8KTMtzvrbJfr0-h3KZqP3qoiwWxCjEGQBCAMTtDuFgZyD075-79aCgYKAT4SARESFQFWKvPlF4paLe5M8yVmGt9Z-w59NQ0163';
+    const accessToken = 'ya29.a0AbVbY6Pv7SAkToKkm8FrJlkJDaUxuw21rLDhFpzAUFMi_S4ncMg9qVQWIvojmccw6yXdlnAYRJ0joZD8f0OF7w0dyV97OgOcw3KFfT9Ftwk4hms-cKEjr-6gkHsTGOtV-SCj9OZKeNeci3oC-aOBkGoDGXaIaCgYKAbYSARESFQFWKvPl_2ytwc52SHAmehPHP2SoIA0163';
 
     fetch(endpoint, {
       method: 'DELETE',
@@ -142,6 +157,7 @@ const DoubleButton = () => {
       })
       .catch(error => console.error('Error deleting event:', error));
   };
+  
 
   return (
     <div className="container">
@@ -167,11 +183,36 @@ const DoubleButton = () => {
                   .catch((error) => { console.log(error); });
               }
             }}  > Create Event from now</button>
-          <GoogleLoginButton />
+          {/* <GoogleLoginButton /> */}
           <button onClick={() => handleCreateEvent()}>NEW EVENT</button>
           <button onClick={() => handleDeleteEvent(events[currentIndex].id)}>DELETE</button>
           <button onClick={listUpcomingEvents}>List upcoming events</button>
-          <button onClick={listCalendars}>ListCalendars</button>
+          <button
+            onClick={() => {
+              apiCalendar.listCalendars().then(({ result }) => {
+                console.log(result.items);
+                setListCalendar(result.items);
+              });
+            }}
+          >
+            List calendars
+          </button>
+          <div>
+            <h4>Calendars</h4>
+            {console.log(listCalendar)}
+            {
+              listCalendar?.map((x)=>{
+                return(
+                  <div key={x.id}>
+                  <label>
+                  <input type='radio' value={x.id} checked={selectedCalendar===x.id} onChange={(e) => setSelectedCalendar(e.target.value)}/>
+                  { x.summary }
+                  </label>
+                  </div>
+                )
+              })
+            }
+          </div>
           <div>
           </div>
           <div className="events">
